@@ -373,13 +373,13 @@ auto dtw_abandon(const data_t *__restrict v1, const data_t *__restrict v2,
 
 	data_t one = 1.0;	//1.0 if data_t is {float,double}, 1 otherwise
 	auto threshWithRightType = one * thresh;  //data = float -> thresh = float
-	return dtw_abandon(x,y,threshWithRightType);
+	return dtw_abandon(x, y, threshWithRightType);
 }
 
 template <class data_t, class len_t>
 data_t dtw(const data_t *__restrict v1, const data_t *__restrict v2,
 		   len_t m, len_t r, short int stride=1) {
-	return dtw_full_dist(v1,v2,m,r,stride);
+	return dtw_full_dist(v1, v2, m, r, stride);
 }
 
 #endif /* defined(__TimeKit__dtw__) */

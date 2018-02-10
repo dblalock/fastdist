@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <vector>
 
-#include "Dense"
+#include "eigen/Core"
 #include "array_utils.hpp"
 #include "eigen_utils.hpp" // for mat_traits
 

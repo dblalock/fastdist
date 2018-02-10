@@ -10,7 +10,7 @@
 #include "testing_utils.hpp"
 
 #include "distance_utils.hpp"
-#include "array_utils.h"
+#include "array_utils.hpp"
 
 TEST_CASE( "z-normalization", "[distance_utils]" ) {
 	
@@ -20,7 +20,7 @@ TEST_CASE( "z-normalization", "[distance_utils]" ) {
 		unsigned int len = 6;
 		data_t x[] = {.7, 0, -.3, 11, -.6, 4};
 		znormalize(x, len);
-		data_t mean = array_mean(x, len);
+        data_t mean = ar::mean(x, len);
 		
 		REQUIRE(rnd(mean) == 0);
 	}

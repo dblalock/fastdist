@@ -25,9 +25,9 @@
 /***********************************************************************/
 /***********************************************************************/
 
-#include <stdlib.h>
-
 #include "deque.h"
+
+#include <cstdlib>
 
 /// Initial the queue at the begining step of envelop calculation
 void deq_new(deque *d, length_t capacity)
