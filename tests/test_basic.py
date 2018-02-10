@@ -1,99 +1,87 @@
 #!/bin/env python
 
-print("------------------------ running dig tests")
+# print("------------------------ running tests")
 
 import numpy as np
-# from ..src import dig
-import dig
-# from dig import dig
+import unittest
+
+import fastdist as fd
+# from fastdist import fastdist as fd
 
 testNum = 0
+
+
 def passedTest():
-	global testNum
-	testNum += 1
-	print("Passed Test #%d" % testNum)
+    global testNum
+    testNum += 1
+    print("Passed Test #%d" % testNum)
 
-def assertEqual(a,b):
-	print(a,b)
-	assert np.allclose(a, b)
-	passedTest()
 
-def printVar(varName,var):
-	print(varName)
-	print(var)
+def assertEqual(a, b):
+    print(a, b)
+    assert np.allclose(a, b)
+    passedTest()
 
-def main_test():
-	# ================================
-	# Test 1 - calling cpp successfully
-	# ================================
 
-	output = dig.swigTest(5)
-	assertEqual(output,6)
+def printVar(varName, var):
+    print(varName)
+    print(var)
 
-	# ================================
-	# Test 2 - sending an array to cpp
-	# ================================
 
-	a = np.array((2,3,4),'d')
-	ans = np.sum(a)
-	output = dig.swigArrayTest(a)
+def test_calling_cpp():
+    assert fd.swigTest(5) == 6  # cpp should increment arg
 
-	assertEqual(output, ans)
 
-	# ================================
-	# Test 3 - dynamic time warping
-	# ================================
+def test_array_to_cpp():
+    a = np.array((2, 3, 4), 'd')
+    assert fd.swigArrayTest(a) == np.sum(a)
 
-	a = np.array((5,2,2,3,5.1),'d')
-	b = np.array((5,2,3,3,4),'d')
-	r = 1
-	dist = dig.dist_dtw(a,b,r)
 
-	assertEqual(dist, 1.21)	# only last element off
+def test_cpp_struct():
+    fd.DistanceMeasureParams(.05, 0)
+    assert True  # initialized struct without throwing
 
-	# ================================
-	# Test 4 - using a struct
-	# ================================
-	p = dig.DistanceMeasureParams(.05, 0)
-	passedTest()	# didn't crash. Huzzah!
 
-	# ================================
-	# Tests 5/6/7 - using a class
-	# ================================
-	a = np.array((5,2, 2,  3,  5), 'd').reshape((5,1)) # closest DTW
-	b = np.array((5,2, 2.5,2.5,5), 'd').reshape((5,1)) # closest L2
-	c = np.array((5,2, 2.2,2.9,5), 'd').reshape((5,1)) # closest L1
-	q = np.array((5,2, 3,  3,  5), 'd').reshape((5,1))
+# def test_numpy_to_eigen():
+#     A = np.arange(12).reshape((4, 3))
+#     rowSums = np.sum(A, axis=1)
+#     assert fd.swigEigenTest(A) == np.dot(rowSums, rowSums)
 
-	tsc = dig.TSClassifier()
-	aCls = 1
-	bCls = 2
-	cCls = 3
-	tsc.addExample(a, aCls)
-	tsc.addExample(b, bCls)
-	tsc.addExample(c, cCls)
 
-	tsc.setAlgorithm(dig.NN_DTW)
-	qCls = tsc.classify(q)
-	assertEqual(qCls,aCls)
+def test_dtw():
+    a = np.array((5, 2, 2, 3, 5.1), 'd')
+    b = np.array((5, 2, 3, 3, 4), 'd')
+    r = 1
+    assert np.allclose(fd.dist_dtw(a, b, r), 1.21)  # only last element off
 
-	tsc.setAlgorithm(dig.NN_L2)
-	qCls = tsc.classify(q)
-	assertEqual(qCls,bCls)
 
-	tsc.setAlgorithm(dig.NN_L1)
-	qCls = tsc.classify(q)
-	assertEqual(qCls,cCls)
+class TestTsClassifier(unittest.TestCase):
 
-	# ================================
-	# Test 8 - interfacing with eigen
-	# ================================
+    def setUp(self):
+        a = np.array((5,2, 2,  3,  5), 'd').reshape((5,1)) # noqa closest DTW
+        b = np.array((5,2, 2.5,2.5,5), 'd').reshape((5,1)) # noqa closest L2
+        c = np.array((5,2, 2.2,2.9,5), 'd').reshape((5,1)) # noqa closest L1
+        self.q = np.array((5,2, 3,  3,  5), 'd').reshape((5,1)) # noqa
 
-	A = np.arange(12).reshape((4, 3))
-	rowSums = np.sum(A, axis=1)
-	ans = np.dot(rowSums, rowSums)
-	output = dig.swigEigenTest(A)
-	assertEqual(ans, output)
+        self.tsc = fd.TSClassifier()
+        self.aCls = 1
+        self.bCls = 2
+        self.cCls = 3
+        self.tsc.addExample(a, self.aCls)
+        self.tsc.addExample(b, self.bCls)
+        self.tsc.addExample(c, self.cCls)
 
-if __name__ == '__main__':
-	main_test()
+    def test_dtw(self):
+        self.tsc.setAlgorithm(fd.NN_DTW)
+        qCls = self.tsc.classify(self.q)
+        assert qCls == self.aCls
+
+    def test_l2(self):
+        self.tsc.setAlgorithm(fd.NN_L2)
+        qCls = self.tsc.classify(self.q)
+        assert qCls == self.bCls
+
+    def test_l1(self):
+        self.tsc.setAlgorithm(fd.NN_L1)
+        qCls = self.tsc.classify(self.q)
+        assert qCls == self.cCls
