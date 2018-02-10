@@ -18,28 +18,22 @@ typedef enum DistanceMeasure {
 	ED = EUCLIDEAN,
 	DYNAMIC_TIME_WARPING = 1,
 	DTW = DYNAMIC_TIME_WARPING,
-	UNIFORM_SCALING = 2,
-	US = UNIFORM_SCALING,
-	SCALED_WARPED_MATCHING = 3,
-	SWM = SCALED_WARPED_MATCHING
 } DistanceMeasure;
 
-//in general, automatically pick distance measure based on these
-typedef struct DistanceMeasureParams {
-	float timeWarping;
-	float timeScaling;
 
-	DistanceMeasureParams(float warp=0, float scaling=0) {
-		timeWarping = warp;
-		timeScaling = scaling;
-	}
-} DistanceMeasureParams;
+class DTWFixedLenIndex {
+private:
+	class impl;
+	std::unique_ptr<impl> _pimpl;
+public:
+	DTWFixedLenIndex(size_t nsamples, size_t ndims, bool tie_dims=true);
+	~DTWFixedLenIndex();
 
-typedef enum SubseqReportStrategy {
-	AGGRESSIVE,
-	MODERATE,
-	CAUTIOUS
-} SubseqReportStrategy;
+	void set_tie_dims(bool tie_dims);
+	void addExample(const float* X, int m, int n, int label);
+	// void addExamples(const float* x, int m, int n, int label);
+	int knn(const float* q, int m, int n);
+};
 
 //==================================================
 // Distance Measures
@@ -66,21 +60,4 @@ int dist_dtw(const int* v1, int m, const int* v2, int n, int r);
 double dist_dtw(const double* v1, const double* v2, int n, int r);
 double dist_dtw(const double* v1, int m, const double* v2, int n, int r);
 
-// ------------------------------- Uniform Scaling distance
-
-// double dist_scaling(const int* v1, const int* v2, int n, int r);
-// double dist_scaling(const int* v1, int m, const int* v2, int n, int r);
-// double dist_scaling(const double* v1, const double* v2, int n, int r);
-// double dist_scaling(const double* v1, int m, const double* v2, int n, int r);
-
-// ------------------------------- distance function wrapper
-
-// // top-level function that computes distance with any amount of warping and time scaling
-// int dist(const int* v1, const int* v2, int n, DistanceMeasureParams p);
-// int dist(const int* v1, int m, const int* v2, int n, DistanceMeasureParams p);
-// double dist(const double* v1, const double* v2, int n, DistanceMeasureParams p);
-// double dist(const double* v1, int m, const double* v2, int n, DistanceMeasureParams p);
-
-
-
-#endif //
+#endif // Dig_Dist_h

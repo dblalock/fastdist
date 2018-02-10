@@ -13,7 +13,6 @@
 #include <math.h>
 #include <array>
 #include <vector>
-#include <valarray>
 
 #include "lower_bounds.hpp"
 #include "Lp.hpp"
@@ -58,7 +57,7 @@ private:
 	len_t _warp;
 	label_t _label;
 public:
-	DTWExample(const data_t* x, len_t len, float warp, label_t label=0, bool znormalize=true):
+	DTWExample(const data_t* x, len_t len, float warp, label_t label=0, bool znormalize=false):
 		_data(x,x+len),
 		_order(len),
 		_LBKeogh_u(len),
@@ -94,7 +93,7 @@ public:
 			probabilities[i] = normalCdf(_LBKeogh_u[i]) - normalCdf(_LBKeogh_l[i]);
 		}
 		bool increasing = true;
-		_order = sorted_indices(probabilities,len,increasing);
+		_order = sorted_indices(probabilities, len, increasing);
 
 		// resample the LB_Keogh envelopes in this order
 		auto uTmp = _LBKeogh_u;
