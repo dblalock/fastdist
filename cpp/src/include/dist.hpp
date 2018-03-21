@@ -9,6 +9,8 @@
 #ifndef Dig_Dist_h
 #define Dig_Dist_h
 
+#include <memory>
+
 //==================================================
 // Constants
 //==================================================
@@ -21,19 +23,19 @@ typedef enum DistanceMeasure {
 } DistanceMeasure;
 
 
-class DTWFixedLenIndex {
-private:
-	class impl;
-	std::unique_ptr<impl> _pimpl;
-public:
-	DTWFixedLenIndex(size_t nsamples, size_t ndims, bool tie_dims=true);
-	~DTWFixedLenIndex();
+// class DTWFixedLenIndex {
+// private:
+// 	class impl;
+// 	std::unique_ptr<impl> _pimpl;
+// public:
+// 	DTWFixedLenIndex(size_t nsamples, size_t ndims, bool tie_dims=true);
+// 	~DTWFixedLenIndex();
 
-	void set_tie_dims(bool tie_dims);
-	void addExample(const float* X, int m, int n, int label);
-	// void addExamples(const float* x, int m, int n, int label);
-	int knn(const float* q, int m, int n);
-};
+// 	void set_tie_dims(bool tie_dims);
+// 	void addExample(const float* X, int m, int n, int label);
+// 	// void addExamples(const float* x, int m, int n, int label);
+// 	int knn(const float* q, int m, int n);
+// };
 
 //==================================================
 // Distance Measures

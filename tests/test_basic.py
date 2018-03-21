@@ -37,9 +37,9 @@ def test_array_to_cpp():
     assert fd.swigArrayTest(a) == np.sum(a)
 
 
-def test_cpp_struct():
-    fd.DistanceMeasureParams(.05, 0)
-    assert True  # initialized struct without throwing
+# def test_cpp_struct():
+#     fd.DistanceMeasureParams(.05, 0)
+#     assert True  # initialized struct without throwing
 
 
 # def test_numpy_to_eigen():
